@@ -1,6 +1,10 @@
 <template>
   <div class="login-container">
-    <van-nav-bar title="登录" />
+    <van-nav-bar title="登录">
+      <template #left>
+        <van-icon name="cross" @click="$router.back()" />
+      </template>
+    </van-nav-bar>
     <van-form @submit="onSubmit" ref="form">
       <van-field
         v-model="user.mobile"
@@ -101,7 +105,10 @@ export default {
       try {
         const res = await login(this.user);
         console.log(res);
+        // 登录成功把token存到vuex和本地储存
+        this.$store.commit("getToken", res.data.data);
         Toast.success("登录成功");
+        this.$router.push("/my");
       } catch (e) {
         console.log(e);
         Toast.fail(e?.response?.data?.message || "服务器端错误");
@@ -122,7 +129,6 @@ export default {
       } catch (e) {
         console.log(e);
         Toast.fail(e?.response?.data?.message || "报错了");
-        this.isShowCountDown = false;
       } finally {
         this.isdisabled = false;
       }
