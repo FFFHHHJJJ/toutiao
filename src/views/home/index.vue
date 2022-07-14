@@ -9,6 +9,7 @@
           block
           round
           size="small"
+          to="/search"
           >搜索</van-button
         >
       </template>
@@ -20,25 +21,45 @@
       </van-tab>
       <template #nav-right>
         <div class="placeholder"></div>
-        <div class="hamburger-btn">
+        <div class="hamburger-btn" @click="showPopup = true">
           <TouTiaoIcon icon="gengduo"></TouTiaoIcon>
         </div>
       </template>
     </van-tabs>
+    <!-- 频道编辑 -->
+    <van-popup
+      v-model="showPopup"
+      position="bottom"
+      style="height: 80%"
+      closeable
+      close-icon-position="top-left"
+    >
+      <ChannelEdit
+        :active="active"
+        :myChannels="userChannels"
+        @onUpdateActive="onUpdateActive"
+      ></ChannelEdit>
+    </van-popup>
+    >
   </div>
 </template>
 
 <script>
 import { getUserChannels } from "@/api/channels";
 import ArticleList from "@/views/home/components/article-list";
+import ChannelEdit from "@/views/home/components/channel-edit.vue";
+import { getLocal } from "@/utils/storage";
+import { CHANNELKEY } from "@/utils/constants";
 export default {
   name: "HomePage",
   components: {
     ArticleList,
+    ChannelEdit,
   },
   props: {},
   data() {
     return {
+      showPopup: false,
       active: 0,
       userChannels: [],
     };
@@ -51,9 +72,25 @@ export default {
   mounted() {},
   methods: {
     async getUserChannels() {
-      const res = await getUserChannels();
-      // console.log(res);
-      this.userChannels = res.data.data.channels;
+      // const res = await getUserChannels();
+      // // console.log(res);
+      // this.userChannels = res.data.data.channels;
+      try {
+        const token = this.$store.state?.user;
+        let channels = getLocal(CHANNELKEY);
+        if (token || !channels) {
+          const res = await getUserChannels();
+          channels = res.data.data.channels;
+        }
+        this.userChannels = channels;
+      } catch (e) {
+        console.log(e);
+        this.$toast("获取文章频道失败");
+      }
+    },
+    onUpdateActive(index, status) {
+      this.active = index;
+      this.showPopup = status;
     },
   },
 };

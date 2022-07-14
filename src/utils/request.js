@@ -1,7 +1,17 @@
 import axios from "axios";
 import store from "@/store";
+import JASONBig from "json-bigint";
 const request = axios.create({
   baseURL: "http://42.192.129.12:8000/",
+  transformResponse: [
+    function (data) {
+      try {
+        return JASONBig.parse(data);
+      } catch (e) {
+        return data;
+      }
+    },
+  ],
 });
 
 export default request;

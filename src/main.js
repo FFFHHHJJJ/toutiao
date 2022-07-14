@@ -12,6 +12,9 @@ import "amfe-flexible";
 Vue.component("TouTiaoIcon", TouTiaoIcon);
 Vue.config.productionTip = false;
 
+// 引入dayjs格式化日期
+import "@/utils/dayjs";
+
 new Vue({
   router,
   store,

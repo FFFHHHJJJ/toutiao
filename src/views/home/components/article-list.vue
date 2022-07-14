@@ -80,7 +80,7 @@ export default {
           timestamp: this.timestamp || +new Date(),
           with_top: 1,
         });
-        console.log(res);
+        // console.log(res);
         this.list = [...this.list, ...res.data.data.results];
         //   设置本次加载中 loading 状态结束
         this.loading = false;
